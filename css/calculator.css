@@ -1,0 +1,74 @@
+/* ===========================
+   CALCULATOR
+   =========================== */
+.calc-config { padding: 16px 20px; margin-bottom: 16px; }
+.calc-config-row { display: flex; gap: 16px; flex-wrap: wrap; }
+.calc-config-row .form-group { flex: 1; min-width: 160px; }
+
+.calc-info-pills {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.calc-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 12px 4px 8px;
+}
+.calc-pill-lbl { font-size: 11px; color: var(--text-muted); }
+.calc-pill-val { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+
+.calc-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.calc-table th {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 2px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.calc-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.calc-table tr:last-child td { border-bottom: none; }
+.calc-parent-row td { background: var(--bg-main); }
+
+.calc-inp {
+  width: 100%;
+  max-width: 110px;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  background: var(--bg-main);
+  color: var(--text-primary);
+  box-sizing: border-box;
+}
+.calc-inp:focus { outline: none; border-color: var(--primary); }
+
+.calc-weight  { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+.calc-ach     { font-size: 13px; font-weight: 700; text-align: right; }
+.calc-contrib { font-size: 13px; font-weight: 700; text-align: right; white-space: nowrap; }
+
+.calc-result {
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+  border-radius: var(--radius);
+  padding: 28px 32px;
+  text-align: center;
+  color: #fff;
+  margin-top: 16px;
+  box-shadow: 0 4px 20px rgba(37,99,235,.3);
+}
+.calc-result-label  { font-size: 13px; font-weight: 500; opacity: .85; margin-bottom: 6px; }
+.calc-result-amount { font-size: 32px; font-weight: 800; letter-spacing: -.5px; }
+.calc-result-note   { font-size: 12px; opacity: .75; margin-top: 6px; }

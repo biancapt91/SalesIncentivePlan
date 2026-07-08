@@ -2,8 +2,13 @@
 /node_modules
 /public/storage
 /storage/*.key
+
 .env
 .env.*
+
+logs/*.log
+logs/*
+
 .phpunit.result.cache
 npm-debug.log
 yarn-error.log

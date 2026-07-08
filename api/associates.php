@@ -173,6 +173,7 @@ if ($method === 'POST') {
     $params[] = !empty($body['reporting_manager_id']) ? sanitize($body['reporting_manager_id']) : null;
     $stmt->execute($params);
 
+    writeAuditLog('CREATE', 'associates', sanitize($body['employee_id']), 'Tambah associate: ' . sanitize($body['full_name']));
     http_response_code(201);
     echo json_encode(['success' => true, 'message' => 'Associate berhasil ditambahkan.']);
     exit;
@@ -247,6 +248,7 @@ if ($method === 'PUT') {
         exit;
     }
 
+    writeAuditLog('UPDATE', 'associates', $empId, 'Update associate: ' . sanitize($body['full_name']));
     echo json_encode(['success' => true, 'message' => 'Associate berhasil diperbarui.']);
     exit;
 }
@@ -272,6 +274,7 @@ if ($method === 'DELETE') {
         exit;
     }
 
+    writeAuditLog('DELETE', 'associates', $empId, 'Hapus associate: ' . $empId);
     echo json_encode(['success' => true, 'message' => 'Associate berhasil dihapus.']);
     exit;
 }
@@ -315,6 +318,7 @@ if ($method === 'PATCH') {
             echo json_encode(['success' => false, 'message' => 'Data tidak ditemukan.']);
             exit;
         }
+        writeAuditLog('UPDATE', 'associates', $empId, 'Resign associate: ' . $empId . ' (tanggal: ' . $resignDate . ')');
         echo json_encode(['success' => true, 'message' => 'Associate berhasil dinonaktifkan.']);
         exit;
     }
@@ -327,6 +331,7 @@ if ($method === 'PATCH') {
             echo json_encode(['success' => false, 'message' => 'Data tidak ditemukan.']);
             exit;
         }
+        writeAuditLog('UPDATE', 'associates', $empId, 'Reaktivasi associate: ' . $empId);
         echo json_encode(['success' => true, 'message' => 'Associate berhasil diaktifkan kembali.']);
         exit;
     }

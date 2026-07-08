@@ -124,3 +124,22 @@ CREATE TABLE IF NOT EXISTS `new_customer_names` (
     FOREIGN KEY (`achievement_id`) REFERENCES `new_customer_achievement` (`id`)
     ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- -----------------------------------------------
+--  Tabel: audit_logs
+-- -----------------------------------------------
+CREATE TABLE IF NOT EXISTS `audit_logs` (
+  `id`          BIGINT        NOT NULL AUTO_INCREMENT,
+  `username`    VARCHAR(60)   NOT NULL,
+  `full_name`   VARCHAR(100)  NOT NULL DEFAULT '',
+  `action`      VARCHAR(30)   NOT NULL COMMENT 'LOGIN, LOGOUT, VIEW, CREATE, UPDATE, DELETE',
+  `resource`    VARCHAR(60)   NOT NULL DEFAULT '' COMMENT 'associates, users, kpi_actuals, sip_report, etc.',
+  `resource_id` VARCHAR(80)   NOT NULL DEFAULT '',
+  `details`     TEXT          NULL,
+  `ip_address`  VARCHAR(45)   NOT NULL DEFAULT '',
+  `created_at`  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_al_username`   (`username`),
+  KEY `idx_al_action`     (`action`),
+  KEY `idx_al_created_at` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

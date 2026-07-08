@@ -1,0 +1,15 @@
+/* ===========================
+   UTILITIES
+   =========================== */
+
+/* Display helpers */
+.hidden { display: none !important; }
+
+/* Achievement percentage state colours (used across multiple features) */
+.actual-pct-met     { color: #16a34a; }
+.actual-pct-partial { color: #ea580c; }
+.actual-pct-low     { color: #dc2626; }
+
+/* KPI qualification status badges */
+.status-qualified     { background: #dcfce7; color: #166534; }
+.status-not-qualified { background: #fee2e2; color: #991b1b; }

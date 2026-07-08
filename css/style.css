@@ -2941,3 +2941,22 @@ tr.asum-sub  td { border-top: 1px solid rgba(226,232,240,0.55) !important; }
   border-top: 1px solid #f1f5f9;
 }
 
+/* ===========================
+   AUDIT LOG PAGE
+   =========================== */
+#page-audit-log .data-table th,
+#page-audit-log .data-table td {
+  font-size: 13px;
+  padding: 8px 10px;
+  vertical-align: middle;
+}
+#page-audit-log .data-table td.empty-state {
+  text-align: center;
+  color: #94a3b8;
+  padding: 32px 20px;
+}
+#audit-table-body tr:hover {
+  background: #f8fafc;
+}
+
+

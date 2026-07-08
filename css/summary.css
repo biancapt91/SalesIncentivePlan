@@ -1,0 +1,9 @@
+/* ===========================
+   SUMMARY PAGE
+   =========================== */
+
+/* Summary table layout */
+.actual-summary-table { min-width: 900px; }
+.actual-summary-table td.asum-span { vertical-align: middle; }
+tr.asum-first td { border-top: 2px solid var(--border) !important; }
+tr.asum-sub   td { border-top: 1px solid rgba(226,232,240,0.55) !important; }

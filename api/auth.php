@@ -34,6 +34,7 @@ if ($method === 'GET' && $action === 'check') {
 
 // ── Logout ────────────────────────────────────
 if ($method === 'GET' && $action === 'logout') {
+    writeAuditLog('LOGOUT', 'auth', $_SESSION['esip_user'] ?? '', 'Logout');
     $_SESSION = [];
     if (ini_get('session.use_cookies')) {
         $p = session_get_cookie_params();
@@ -64,6 +65,7 @@ if ($method === 'POST') {
         $_SESSION['esip_role']         = 'admin';
         $_SESSION['esip_full_name']    = 'Admin';
         $_SESSION['esip_associate_id'] = null;
+        writeAuditLog('LOGIN', 'auth', $username, 'Login berhasil (admin)');
         echo json_encode([
             'success'  => true,
             'role'     => 'admin',
@@ -75,14 +77,11 @@ if ($method === 'POST') {
     // Check database users
     try {
         $pdo  = getDB();
-        $stmt = $pdo->prepare("
-            SELECT id, username, password_hash, full_name, role, associate_id, detail_area
-            FROM esip_users
-            WHERE username = ?
-            LIMIT 1
-        ");
-        $stmt->execute([$username]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        require_once __DIR__.'/../services/AuthService.php';
+
+        $service = new AuthService(getDB());
+
+        $user = $service->login($username, $password);
 
         if ($user && password_verify($password, $user['password_hash'])) {
             session_regenerate_id(true);
@@ -91,6 +90,7 @@ if ($method === 'POST') {
             $_SESSION['esip_full_name']    = $user['full_name'];
             $_SESSION['esip_associate_id'] = $user['associate_id'];
             $_SESSION['esip_detail_area']  = $user['detail_area'] ?? null;
+            writeAuditLog('LOGIN', 'auth', $user['username'], 'Login berhasil (role: ' . $user['role'] . ')');
             echo json_encode([
                 'success'      => true,
                 'role'         => $user['role'],
@@ -100,12 +100,13 @@ if ($method === 'POST') {
             ]);
         } else {
             http_response_code(401);
+            writeAuditLog('LOGIN_FAILED', 'auth', $username, 'Login gagal — username/password salah');
             echo json_encode(['success' => false, 'message' => 'Wrong username or password.']);
         }
     } catch (Exception $e) {
-        // Table may not exist yet — fallback
-        http_response_code(401);
-        echo json_encode(['success' => false, 'message' => 'Wrong username or password.']);
+        logError($e);
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Terjadi kesalahan pada sistem.']);
     }
     exit;
 }

@@ -1,0 +1,53 @@
+/* ===========================
+   REPORT — KPI Tables, SIP Report
+   =========================== */
+
+/* ── KPI Target/Actual Input Table ───────────── */
+.kpi-table          { min-width: unset; }
+.kpi-table .kpi-label { white-space: nowrap; }
+.kpi-table td:nth-child(1) { width: 36px; }
+.kpi-table td:nth-child(3) { width: 58px; text-align: center; }
+.kpi-month-th {
+  width: 62px;
+  text-align: right;
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+}
+.kpi-month-td {
+  text-align: right;
+  padding: 8px 4px !important;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.kpi-val { color: var(--text-primary); }
+.kpi-input {
+  width: 72px;
+  padding: 3px 5px;
+  border: 1px solid #93c5fd;
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: right;
+  outline: none;
+  background: #eff6ff;
+}
+.kpi-input.kpi-pct-input { width: 52px; }
+.kpi-input:focus { border-color: #3b82f6; }
+tr.kpi-editing { background: #f8fbff; }
+
+/* ── KPI Sub-rows (Distributor / Direct) ──────── */
+.kpi-parent-header { background: #f1f5f9; }
+.kpi-parent-header td { color: #334155; }
+.kpi-sub-row { background: #f8faff; }
+.kpi-sub-first > td { border-top: 1px dashed var(--border) !important; }
+.kpi-sub-arrow { display: inline-block; margin-right: 4px; color: var(--text-muted); font-size: 11px; }
+
+/* ── SIP Monthly Budget Table ─────────────────── */
+.sip-current-month td {
+  background: rgba(79, 130, 230, 0.08);
+  font-weight: 600;
+}
+.sip-total-row td {
+  background: var(--bg-main);
+  border-top: 2px solid var(--border);
+  font-weight: 700;
+}

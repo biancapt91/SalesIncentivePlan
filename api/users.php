@@ -112,6 +112,7 @@ if ($method === 'POST') {
             VALUES (?, ?, ?, ?, ?, ?)
         ");
         $stmt->execute([$username, $hash, $full_name, $role, $associate_id, $detail_area]);
+        writeAuditLog('CREATE', 'users', $username, 'Tambah user: ' . $full_name . ' (role: ' . $role . ')');
         echo json_encode(['success' => true, 'id' => (int)$pdo->lastInsertId()]);
     } catch (PDOException $e) {
         if ($e->getCode() === '23000') {
@@ -181,6 +182,7 @@ if ($method === 'PUT') {
             ");
             $stmt->execute([$username, $full_name, $role, $associate_id, $detail_area, $id]);
         }
+        writeAuditLog('UPDATE', 'users', $username, 'Update user: ' . $full_name . ' (role: ' . $role . ')');
         echo json_encode(['success' => true]);
     } catch (PDOException $e) {
         if ($e->getCode() === '23000') {
@@ -204,6 +206,7 @@ if ($method === 'DELETE') {
     }
     $stmt = $pdo->prepare("DELETE FROM esip_users WHERE id=?");
     $stmt->execute([$id]);
+    writeAuditLog('DELETE', 'users', (string)$id, 'Hapus user ID: ' . $id);
     echo json_encode(['success' => true]);
     exit;
 }

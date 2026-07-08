@@ -1,0 +1,464 @@
+/* ===========================
+   DASHBOARD — Infographics, Charts, Rankings
+   =========================== */
+
+/* ── Section Title & Period Picker ───────────── */
+.dash-section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 28px 0 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--border);
+  flex-wrap: wrap;
+}
+.dash-section-title i { color: var(--primary); }
+.dash-section-period {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin-left: 4px;
+}
+
+.dash-period-picker {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+.dash-period-sep {
+  width: 2px;
+  height: 18px;
+  background: #618bd4;
+  margin: 0 6px;
+}
+.dash-period-btn {
+  background: none;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+.dash-period-btn:hover { border-color: var(--primary); color: var(--primary); }
+.dash-period-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ── Infographic Grid & Cards ────────────────── */
+.dash-infographic-grid-recap {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 8px;
+  align-items: stretch;
+}
+.dash-infographic-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 8px;
+  align-items: stretch;
+}
+.dash-infographic-single { margin-bottom: 8px; }
+
+.infographic-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.infographic-card-header {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  background: #f9f3f6;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.infographic-card-header i { color: var(--primary); }
+.infographic-body { padding: 14px 16px; }
+.dash-area-body  { flex: 1; min-height: 0; overflow-y: auto; }
+.dash-nc-body {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 16px 10px;
+  flex: 1;
+  min-height: 0;
+  box-sizing: border-box;
+}
+.dash-no-data {
+  color: var(--text-muted);
+  font-size: 12px;
+  padding: 12px;
+  text-align: center;
+}
+
+/* ── Monthly CW/Consumption bar chart ────────── */
+.dash-nc-bars {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  padding-top: 22px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.dash-nc-group {
+  flex: 1;
+  min-width: 0;
+  max-width: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+.dash-nc-group--single { flex: 0 0 100px; max-width: 100px; }
+.dash-nc-pair {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  height: 100%;
+  width: 100%;
+}
+.dash-nc-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  position: relative;
+}
+.dash-nc-bar { width: 100%; border-radius: 4px 4px 0 0; transition: height .3s ease; min-height: 0; }
+.dash-nc-val {
+  position: absolute;
+  top: -18px;
+  left: 0; right: 0;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.dash-nc-lbl {
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+.dash-nc-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
+.dash-nc-legend-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+}
+
+/* ── Horizontal Bar Chart ─────────────────────── */
+.dash-bar-chart { display: flex; flex-direction: column; gap: 9px; }
+.dash-bar-row   { display: flex; align-items: center; gap: 8px; }
+.dash-bar-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  width: 140px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dash-bar-track {
+  flex: 1;
+  height: 9px;
+  background: var(--bg-main);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.dash-bar-fill { height: 100%; border-radius: 99px; transition: width 0.5s ease; }
+.dash-bar-count {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  min-width: 22px;
+  text-align: right;
+}
+
+/* Position chart grid alignment */
+.dash-bar-chart--position {
+  display: grid;
+  grid-template-columns: max-content 1fr auto;
+  gap: 5px 8px;
+  align-items: center;
+}
+.dash-bar-chart--position .dash-bar-row { display: contents; }
+.dash-bar-chart--position .dash-bar-label {
+  font-size: 11.5px;
+  white-space: nowrap;
+  overflow: visible;
+  width: auto;
+}
+.dash-bar-chart--position .dash-bar-count {
+  font-size: 11.5px;
+  min-width: 18px;
+  text-align: right;
+}
+
+/* KPI totals bar */
+.dash-kpi-row { margin-bottom: 9px; }
+.dash-kpi-lbl { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+.dash-kpi-val { font-weight: 700; color: var(--text-primary); }
+
+/* ── Area & Level Tree ────────────────────────── */
+.dash-area-badge {
+  background: var(--primary); color: #fff;
+  font-size: 11px; padding: 1px 7px; border-radius: 99px; font-weight: 600;
+}
+.dash-area-group    { margin-bottom: 10px; }
+.dash-area-group-hd {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12.5px; font-weight: 700; color: var(--text-primary);
+  padding: 3px 0;
+}
+.dash-area-details  { margin-left: 10px; }
+.dash-area-detail   {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; color: var(--text-secondary);
+  padding: 3px 0 3px 8px;
+  border-left: 2px solid var(--border);
+}
+.dash-area-cnt { font-weight: 700; color: var(--text-primary); font-size: 12px; }
+.dash-level-grid {
+  display: grid;
+  grid-template-columns: max-content 1fr auto;
+  gap: 5px 10px;
+  align-items: center;
+}
+.dash-level-cat-hd {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding: 4px 0 2px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2px;
+}
+.dash-level-cat-hd:not(:first-child) { margin-top: 8px; }
+.dash-level-lbl {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  padding-left: 8px;
+  border-left: 2px solid var(--border);
+}
+
+/* ── Achievement Rank Filters ─────────────────── */
+.ach-filter { display: flex; gap: 4px; margin-left: auto; }
+.ach-filter-btn {
+  padding: 2px 9px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: none;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.ach-filter-btn:hover { border-color: var(--primary); color: var(--primary); }
+.ach-filter-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; font-weight: 600; }
+
+/* Overrides inside burgundy rank banner */
+.ab-rank-filter-wrap .ach-filter-btn {
+  background: rgba(255,255,255,0.85);
+  border-color: rgba(255,255,255,0.6);
+  color: #6b1228;
+}
+.ab-rank-filter-wrap .ach-filter-btn:hover { background: #fff; border-color: #fff; color: #9b1c3a; }
+.ab-rank-filter-wrap .ach-filter-btn.active { background: #6b1228; border-color: #6b1228; color: #fff; }
+.ab-rank-filter-wrap .ach-pct-toggle {
+  background: rgba(255,255,255,0.85);
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: 6px;
+  color: #6b1228;
+  padding: 2px 8px;
+}
+.ach-pct-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: none;
+  user-select: none;
+  transition: var(--transition);
+}
+.ach-pct-toggle:has(input:checked) {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.ach-pct-toggle input { cursor: pointer; accent-color: var(--primary); }
+
+/* ── KPI Achievement Rank Cards ──────────────── */
+.dash-kpi-rank-container {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+.dash-kpi-rank-card { min-width: 0; }
+.dash-kpi-rank-card .infographic-card-header { flex-wrap: nowrap; row-gap: 6px; }
+.kpi-rank-card-title {
+  font-size: 14px;
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.kpi-rank-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 4px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+}
+.kpi-area-select,
+.kpi-level-select,
+.kpi-category-select {
+  flex-shrink: 0;
+  font-size: 11px;
+  padding: 2px 22px 2px 7px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394a3b8'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 7px center;
+  transition: var(--transition);
+  max-width: 140px;
+}
+.kpi-area-select:hover, .kpi-area-select:focus,
+.kpi-level-select:hover, .kpi-level-select:focus,
+.kpi-category-select:hover, .kpi-category-select:focus {
+  border-color: var(--primary);
+  color: var(--text-primary);
+}
+
+/* ── Closed Won vs Consumption ───────────────── */
+.cw-split-bar { padding: 8px 14px 6px; border-bottom: 1px solid var(--border); }
+.cw-split-labels { display:flex; justify-content:space-between; font-size:11px; font-weight:600; color:var(--text-secondary); margin-bottom:5px; }
+.cw-split-dot { display:inline-block; width:8px; height:8px; border-radius:2px; vertical-align:middle; margin-right:4px; }
+.cw-split-track { display:flex; height:10px; border-radius:6px; overflow:hidden; background:var(--border); gap:1px; }
+.cw-split-fill { height:100%; transition:width .4s ease; min-width:2px; }
+.cw-split-vals { display:flex; justify-content:space-between; font-size:11px; font-weight:700; margin-top:4px; }
+
+.cw-vbar-chart { display: flex; justify-content: center; align-items: flex-end; gap: 28px; padding: 12px 14px 10px; }
+.cw-vbar-col { display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; max-width: 110px; }
+.cw-vbar-val { font-size: 12px; font-weight: 700; white-space: nowrap; }
+.cw-vbar-track { display: flex; align-items: flex-end; width: 48px; background: var(--border); border-radius: 5px 5px 3px 3px; overflow: hidden; }
+.cw-vbar-fill { width: 100%; border-radius: 5px 5px 3px 3px; transition: height .4s ease; }
+.cw-vbar-lbl { font-size: 11px; font-weight: 600; color: var(--text-secondary); text-align: center; line-height: 1.3; }
+
+/* ── Achievement Rank List ────────────────────── */
+.dash-ach-body { max-height: calc(10 * 43px); overflow-y: auto; }
+.ach-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  margin-bottom: 4px;
+  transition: background .15s;
+}
+.ach-row:last-child { margin-bottom: 0; }
+.ach-top1 { border-color: #f59e0b; background: linear-gradient(90deg, #fffbeb 0%, #fef3c7 100%); box-shadow: 0 2px 8px rgba(245,158,11,.15); }
+.ach-top2 { border-color: #94a3b8; background: linear-gradient(90deg, #f8fafc 0%, #f1f5f9 100%); box-shadow: 0 2px 6px rgba(148,163,184,.12); }
+.ach-top3 { border-color: #c2825a; background: linear-gradient(90deg, #fff7ed 0%, #ffedd5 100%); box-shadow: 0 2px 6px rgba(194,130,90,.12); }
+.ach-rank       { font-size: 20px; flex-shrink: 0; width: 28px; text-align: center; }
+.ach-rank-num   { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+.ach-info       { flex: 1; min-width: 0; }
+.ach-name       { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ach-sub        { font-size: 11px; color: var(--text-secondary); }
+.ach-pct        { font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.dash-top3-pct  { font-size: 17px; font-weight: 700; flex-shrink: 0; }
+
+/* ── Top 3 SIP ────────────────────────────────── */
+.dash-sip-level-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+  margin-bottom: 8px;
+}
+.dash-top3-sip-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 14px;
+}
+.dash-sip-card {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 18px 12px; border-radius: var(--radius-sm);
+  text-align: center; border: 1px solid var(--border);
+}
+.dash-sip-r1 { border-color: #f59e0b; background: linear-gradient(160deg,#fffbeb,#fef3c7); }
+.dash-sip-r2 { border-color: #94a3b8; background: linear-gradient(160deg,#f8fafc,#f1f5f9); }
+.dash-sip-r3 { border-color: #d97706; background: linear-gradient(160deg,#fff7ed,#ffedd5); }
+.dash-sip-medal  { font-size: 28px; margin-bottom: 6px; }
+.dash-sip-name   { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 3px; }
+.dash-sip-area   { font-size: 11.5px; color: var(--text-secondary); margin-bottom: 10px; }
+.dash-sip-amount { font-size: 16px; font-weight: 700; color: var(--primary); }
+
+/* ── Responsive ───────────────────────────────── */
+@media (max-width: 1200px) {
+  .dash-infographic-grid { grid-template-columns: repeat(2, 1fr); }
+  .dash-top3-sip-grid    { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .dash-infographic-grid { grid-template-columns: 1fr; }
+  .dash-top3-sip-grid    { grid-template-columns: 1fr; }
+}
