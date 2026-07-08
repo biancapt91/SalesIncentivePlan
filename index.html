@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>e-SIP | Sales Incentive Plan</title>
+  <link rel="stylesheet" href="css/style.css?v=18" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- USER ACCOUNT SETTING MODAL -->
+  <div class="uas-overlay hidden" id="uasOverlay">
+    <div class="uas-modal">
+      <div class="uas-header">
+        <div class="uas-header-left">
+          <i class="fa-solid fa-users-gear"></i>
+          <h3>User Account Setting</h3>
+        </div>
+        <button class="uas-close" id="uasClose"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="uas-body">
+        <!-- User list -->
+        <div class="uas-list-wrap">
+          <div class="uas-list-header">
+            <span class="uas-list-title">User Account List</span>
+            <button class="btn btn-primary btn-sm" id="btnAddUser">
+              <i class="fa-solid fa-plus"></i> Add New Account
+            </button>
+          </div>
+          <div class="uas-table-wrap">
+            <table class="uas-table" id="uasTable">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Name</th>
+                  <th>Role</th>
+                  <th>Associate</th>
+                  <th style="width:80px;text-align:center;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="uasTableBody">
+                <tr><td colspan="5" class="uas-empty">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Add / Edit form (hidden by default) -->
+        <div class="uas-form-wrap hidden" id="uasFormWrap">
+          <div class="uas-form-header">
+            <span id="uasFormTitle">Add New Account</span>
+            <button class="uas-back-btn" id="uasBackBtn"><i class="fa-solid fa-arrow-left"></i> Back</button>
+          </div>
+
+          <form id="uasForm" autocomplete="off">
+            <input type="hidden" id="uasEditId" value="">
+
+            <div class="uas-form-grid">
+              <!-- Source: associate or manual -->
+              <div class="form-group form-full" id="uasSourceGroup">
+                <label>Account Source</label>
+                <div class="uas-radio-group">
+                  <label class="uas-radio-label">
+                    <input type="radio" name="uasSource" value="associate" checked> From Registered Associate
+                  </label>
+                  <label class="uas-radio-label">
+                    <input type="radio" name="uasSource" value="manual"> Input Manual
+                  </label>
+                </div>
+              </div>
+
+              <!-- Associate picker (shown when source = associate) -->
+              <div class="form-group form-full" id="uasAssocPickerGroup">
+                <label for="uasAssocPicker">Select Associate <span class="required">*</span></label>
+                <select id="uasAssocPicker">
+                  <option value="">-- Select Associate --</option>
+                </select>
+              </div>
+
+              <!-- Name (editable when manual) -->
+              <div class="form-group">
+                <label for="uasName">Full Name <span class="required">*</span></label>
+                <input type="text" id="uasName" placeholder="Full name" />
+              </div>
+
+              <!-- Username -->
+              <div class="form-group">
+                <label for="uasUsername">Username <span class="required">*</span></label>
+                <input type="text" id="uasUsername" placeholder="Username for login" autocomplete="off"/>
+              </div>
+
+              <!-- Password -->
+              <div class="form-group">
+                <label for="uasPassword">Password <span class="required">*</span></label>
+                <div style="position:relative;display:flex;align-items:center;">
+                  <input type="password" id="uasPassword" placeholder="Password (min. 6 characters)" style="padding-right:44px;" autocomplete="new-password"/>
+                  <button type="button" class="login-eye" id="uasEye" style="right:8px;position:absolute;"><i class="fa-solid fa-eye" id="uasEyeIcon"></i></button>
+                </div>
+                <span class="uas-hint" id="uasPasswordHint">Leave blank if you don't want to change the password.</span>
+              </div>
+
+              <!-- Role -->
+              <div class="form-group">
+                <label for="uasRole">Role <span class="required">*</span></label>
+                <select id="uasRole">
+                  <option value="">-- Select Role --</option>
+                  <option value="sales_associate">Sales Associate</option>
+                  <option value="supervisor">Supervisor</option>
+                  <option value="head_admin">Head Admin</option>
+                  <option value="sales_admin">Sales Admin</option>
+                </select>
+              </div>
+
+              <!-- Detail Area (shown for head_admin / sales_admin) -->
+              <div class="form-group" id="uasDetailAreaGroup" style="display:none;">
+                <label>Detail Area <span class="required">*</span></label>
+                <div id="uasDetailArea" class="uas-area-checklist"></div>
+              </div>
+            </div>
+
+            <!-- Role description -->
+            <div class="uas-role-desc hidden" id="uasRoleDesc"></div>
+
+            <div id="uasFormError" class="uas-form-error hidden"></div>
+
+            <div class="uas-form-actions">
+              <button type="button" class="btn btn-secondary" id="uasCancelForm">Cancel</button>
+              <button type="submit" class="btn btn-primary" id="uasSubmitBtn">
+                <span id="uasSubmitText">Save Account</span>
+                <i class="fa-solid fa-spinner fa-spin hidden" id="uasSubmitSpinner"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHANGE PASSWORD MODAL -->
+  <div class="cpw-overlay hidden" id="cpwOverlay">
+    <div class="cpw-modal">
+      <div class="cpw-header">
+        <div class="cpw-header-left">
+          <i class="fa-solid fa-key"></i>
+          <h3>Change Password</h3>
+        </div>
+        <button class="cpw-close" id="cpwClose"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="cpw-body">
+        <form id="cpwForm" autocomplete="off">
+          <div class="form-group">
+            <label for="cpwCurrentPassword">Current Password <span class="required">*</span></label>
+            <div style="position:relative;display:flex;align-items:center;">
+              <input type="password" id="cpwCurrentPassword" placeholder="Enter your current password" autocomplete="current-password" style="padding-right:44px;" />
+              <button type="button" class="cpw-eye" id="cpwEyeCurrent" style="right:8px;position:absolute;"><i class="fa-solid fa-eye" id="cpwEyeCurrentIcon"></i></button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="cpwNewPassword">New Password <span class="required">*</span></label>
+            <div style="position:relative;display:flex;align-items:center;">
+              <input type="password" id="cpwNewPassword" placeholder="Enter new password (min. 6 characters)" autocomplete="new-password" style="padding-right:44px;" />
+              <button type="button" class="cpw-eye" id="cpwEyeNew" style="right:8px;position:absolute;"><i class="fa-solid fa-eye" id="cpwEyeNewIcon"></i></button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="cpwConfirmPassword">Confirm New Password <span class="required">*</span></label>
+            <div style="position:relative;display:flex;align-items:center;">
+              <input type="password" id="cpwConfirmPassword" placeholder="Confirm your new password" autocomplete="new-password" style="padding-right:44px;" />
+              <button type="button" class="cpw-eye" id="cpwEyeConfirm" style="right:8px;position:absolute;"><i class="fa-solid fa-eye" id="cpwEyeConfirmIcon"></i></button>
+            </div>
+          </div>
+
+          <div id="cpwFormError" class="cpw-form-error hidden"></div>
+
+          <div class="cpw-form-actions">
+            <button type="button" class="btn btn-secondary" id="cpwCancelBtn">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="cpwSubmitBtn">
+              <span id="cpwSubmitText">Change Password</span>
+              <i class="fa-solid fa-spinner fa-spin hidden" id="cpwSubmitSpinner"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGIN OVERLAY -->
+  <div id="loginOverlay" class="login-overlay">
+    <div class="login-right">
+      <div class="login-card">
+        <div class="login-avatar">
+          <i class="fa-solid fa-user"></i>
+        </div>
+        <h2 class="login-title">Welcome to e-SIP</h2>
+        <p class="login-subtitle">Log in to your account to continue</p>
+
+        <div class="login-divider">
+          <span class="login-divider-line"></span>
+          <span class="login-divider-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A22445" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <!-- frosting dome -->
+              <path d="M5 12 C5 6.5 8.5 3.5 12 3.5 C15.5 3.5 19 6.5 19 12"/>
+              <!-- cup wrapper -->
+              <path d="M5 12 L6.5 20 H17.5 L19 12 Z"/>
+              <!-- wrapper lines -->
+              <line x1="9.5" y1="12" x2="8.5" y2="20"/>
+              <line x1="14.5" y1="12" x2="15.5" y2="20"/>
+              <!-- swirl top -->
+              <path d="M12 3.5 C11 5 13 6.5 12 8" stroke-width="1.4"/>
+            </svg>
+          </span>
+          <span class="login-divider-line"></span>
+        </div>
+
+        <form id="loginForm" autocomplete="off">
+          <div class="login-field">
+            <label for="loginUsername">Username</label>
+            <div class="login-input-wrap">
+              <i class="fa-solid fa-user"></i>
+              <input type="text" id="loginUsername" placeholder="input your username" autocomplete="username" />
+            </div>
+          </div>
+          <div class="login-field">
+            <label for="loginPassword">Password</label>
+            <div class="login-input-wrap">
+              <i class="fa-solid fa-lock"></i>
+              <input type="password" id="loginPassword" placeholder="input your password" autocomplete="current-password" />
+              <button type="button" class="login-eye" id="loginEye"><i class="fa-solid fa-eye" id="loginEyeIcon"></i></button>
+            </div>
+          </div>
+          <div id="loginError" class="login-error" style="display:none;"></div>
+          <button type="submit" class="login-btn" id="loginSubmit">
+            <span id="loginBtnText">Log In</span>
+            <i class="fa-solid fa-spinner fa-spin" id="loginSpinner" style="display:none;"></i>
+          </button>
+        </form>
+
+        <p class="login-admin-note">Don't have an account? <span>Contact your administrator.</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-icon"><i class="fa-solid fa-chart-line"></i></span>
+        <span class="logo-text">e-SIP</span>
+      </div>
+      <span class="logo-sub">Sales Incentive Plan</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul>
+        <li>
+          <a href="#" class="nav-link active" data-page="dashboard">
+            <i class="fa-solid fa-gauge-high"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link" data-page="associate">
+            <i class="fa-solid fa-users"></i>
+            <span>Associate</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link" data-page="department-head">
+            <i class="fa-solid fa-user-tie"></i>
+            <span>Department Head</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link" data-page="actual-achievement">
+            <i class="fa-solid fa-clipboard-check"></i>
+            <span>Actual Achievement</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link" data-page="summary">
+            <i class="fa-solid fa-file-contract"></i>
+            <span>Summary</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link" data-page="new-customer">
+            <i class="fa-solid fa-trophy"></i>
+            <span>Achievement Board</span>
+          </a>
+        </li>
+        <li style="width:100%;">
+          <hr style="width:100%;margin:0;border:none;border-top:2px solid #88809e;">
+        </li>
+        <li>
+          <a href="#" class="nav-link" data-page="sip-report">
+            <i class="fa-solid fa-file-invoice-dollar"></i>
+            <span>SIP Report</span>
+          </a>
+        </li>
+        <li style="width:100%;">
+          <hr style="width:100%;margin:0;border:none;border-top:2px solid #88809e;">
+        </li>
+        <li>
+          <a href="#" class="nav-link" data-page="calculator">
+            <i class="fa-solid fa-calculator"></i>
+            <span>Calculator</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link" data-page="org-structure">
+            <i class="fa-solid fa-sitemap"></i>
+            <span>Organizational Structure</span>
+          </a>
+        </li>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <div class="main-wrapper" id="mainWrapper">
+
+    <!-- TOP HEADER -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="toggle-btn" id="toggleBtn">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="page-title" id="pageTitle">Dashboard</div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-date" id="topbarDate"></div>
+        
+        <!-- User Profile Dropdown -->
+        <div class="user-profile-wrap" id="userProfileWrap">
+          <button class="user-profile-btn" id="btnUserProfile" title="User Profile">
+            <i class="fa-solid fa-circle-user"></i>
+            <span id="topbarUsername">Admin</span>
+          </button>
+          <div class="user-profile-dropdown hidden" id="userProfileDropdown">
+            <button class="user-profile-dd-item" id="btnProfileChangePassword">
+              <i class="fa-solid fa-key"></i>
+              <span>Change Password</span>
+            </button>
+            <button class="user-profile-dd-item" id="btnProfileUserAccountSetting" data-admin-only style="display:none;">
+              <i class="fa-solid fa-users-gear"></i>
+              <span>User Account Setting</span>
+            </button>
+            <button class="user-profile-dd-item" id="btnProfileTiersSetting" data-admin-only style="display:none;">
+              <i class="fa-solid fa-layer-group"></i>
+              <span>SIP Tiers</span>
+            </button>
+            <div class="user-profile-dd-divider"></div>
+            <button class="user-profile-dd-item user-profile-dd-logout" id="btnProfileLogout">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- View As (POV) - admin only -->
+        <div class="pov-wrap" id="povWrap" style="display:none;">
+          <button class="btn-pov" id="btnViewAs" title="View as another account">
+            <i class="fa-solid fa-eye"></i>
+            <span>View As</span>
+          </button>
+          <div class="pov-dropdown hidden" id="povDropdown">
+            <div class="pov-dd-header">View as account</div>
+            <div class="pov-dd-list" id="povUserList"><span class="pov-dd-empty">Loading...</span></div>
+          </div>
+        </div>
+
+        <button class="btn-logout hidden" id="btnLogout" title="Logout">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- POV BANNER -->
+    <div class="pov-banner hidden" id="povBanner">
+      <i class="fa-solid fa-eye"></i>
+      <span>Viewing as: <strong id="povBannerName"></strong></span>
+      <span class="pov-banner-role" id="povBannerRole"></span>
+      <button class="pov-exit-btn" id="btnExitPov"><i class="fa-solid fa-xmark"></i> Exit POV</button>
+    </div>
+
+    <!-- PAGE CONTENT -->
+    <main class="content" id="pageContent">
+
+      <!-- ======================== DASHBOARD PAGE ======================== -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <h2>Dashboard</h2>
+          <p style="color: #A22445;">Welcome to e-SIP — Sales Incentive Plan Rich Products Indonesia</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card blue">
+            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+            <div class="stat-info">
+              <div class="stat-value" id="stat-associates">0</div>
+              <div class="stat-label">Total Active Associate</div>
+            </div>
+          </div>
+          <div class="stat-card orange">
+            <div class="stat-icon"><i class="fa-solid fa-money-bill-wave"></i></div>
+            <div class="stat-info">
+              <div class="stat-value" id="stat-sip-budget">Rp 0</div>
+              <div class="stat-label">Total SIP Budget</div>
+            </div>
+          </div>
+          <div class="stat-card purple">
+            <div class="stat-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+            <div class="stat-info">
+              <div class="stat-value" id="stat-sip-earned">—</div>
+              <div class="stat-label">Total SIP Earned <span id="stat-sip-year" style="font-size:10px;font-weight:400;">(YTD)</span></div>
+            </div>
+          </div>
+
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; align-items:center; gap:2px; margin-top:30px; border-top:1px solid #ddd; padding-top:16px;">
+          <div class="dash-period-picker" id="dash-period-picker">
+            <button class="dash-period-btn" data-period="ytd">YTD</button>
+            <div class="dash-period-sep" id="dash-period-sep-q"></div>
+            <div class="dash-period-sep" id="dash-period-sep-m"></div>
+          </div>
+          <span id="dash-month-label" class="dash-section-period"></span>
+        </div>
+        
+        <!-- Achievement Rank -->
+        <div class="dash-section-title">
+          <i class="fa-solid fa-trophy"></i> Achievement Rank
+        </div>
+        <div class="dash-infographic-grid">
+          <div id="dash-kpi-rank-container" class="dash-kpi-rank-container"></div>
+        </div>
+        
+        <!-- SIP Summary -->
+        <div class="dash-section-title" id="dash-sip-summary-title">
+          <i class="fa-solid fa-sack-dollar"></i> SIP Summary
+          <span id="dash-sip-month-label" class="dash-section-period"></span>
+        </div>
+        <div id="dash-top3-sip"></div>
+
+        <!-- Rekap Data Pegawai -->
+        <div class="dash-section-title">
+          <i class="fa-solid fa-users"></i> Associates Recap
+        </div>
+        <div class="dash-infographic-grid-recap">
+          <div class="infographic-card">
+            <div class="infographic-card-header"><i class="fa-solid fa-layer-group"></i> Level Distribution</div>
+            <div id="dash-level-chart" class="infographic-body"></div>
+          </div>
+          <div class="infographic-card">
+            <div class="infographic-card-header"><i class="fa-solid fa-briefcase"></i> Position Distribution</div>
+            <div id="dash-position-chart" class="infographic-body"></div>
+          </div>
+          <div class="infographic-card">
+            <div class="infographic-card-header"><i class="fa-solid fa-map-location-dot"></i> Area Distribution</div>
+            <div id="dash-area-chart" class="infographic-body dash-area-body"></div>
+          </div>
+        </div>
+
+        <!-- Actual Achievement -->
+        <div class="dash-section-title">
+          <i class="fa-solid fa-chart-line"></i> Actual Achievement per KPI
+        </div>
+        <div class="dash-infographic-grid">
+          <div class="infographic-card">
+            <div class="infographic-card-header"><i class="fa-solid fa-bullseye"></i> Total Actual per KPI</div>
+            <div id="dash-kpi-totals" class="infographic-body"></div>
+          </div>
+          <div class="infographic-card" style="display:flex;flex-direction:column;">
+            <div class="infographic-card-header"><i class="fa-solid fa-chart-column"></i> Closed Won/Consumption</div>
+            <div id="dash-monthly-nc" class="infographic-body dash-nc-body"></div>
+          </div>
+        </div>
+
+
+      </div>
+
+      <!-- ======================== ASSOCIATE PAGE ======================== -->
+      <div class="page" id="page-associate">
+        <div class="page-header">
+          <h2>Associate</h2>
+          <p>List of Sales Employees</p>
+        </div>
+
+        <div class="toolbar" style="flex-wrap:wrap;gap:8px;">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchAssociate" placeholder="Search name, ID, position..." />
+          </div>
+          <select id="filterLevel" class="month-picker" style="min-width:120px;">
+            <option value="">All Levels</option>
+          </select>
+          <select id="filterCategory" class="month-picker" style="min-width:130px;">
+            <option value="">All Categories</option>
+          </select>
+          <select id="filterPlan" class="month-picker" style="min-width:110px;">
+            <option value="">All Plans</option>
+          </select>
+          <select id="filterGroupArea" class="month-picker" style="min-width:160px;">
+            <option value="">All Group Areas</option>
+          </select>
+          <select id="filterDetailArea" class="month-picker" style="min-width:160px;">
+            <option value="">All Detail Areas</option>
+          </select>
+          <button class="btn btn-secondary btn-sm" onclick="resetAssociateFilters()">
+            <i class="fa-solid fa-xmark"></i> Reset
+          </button>
+          <button class="btn btn-primary" id="btnAddAssociate" style="margin-left:auto;">
+            <i class="fa-solid fa-plus"></i> Add Associate
+          </button>
+        </div>
+
+        <div class="table-card">
+          <div class="table-info">
+            <span id="tableCount">Showing 0 records</span>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="associateTable">
+              <thead>
+                <tr>
+                  <th>No.</th>
+                  <th>ID</th>
+                  <th>Full Name</th>
+                  <th>Initial Position</th>
+                  <th>Level</th>
+                  <th>Category</th>
+                  <th>Plan</th>
+                  <th>Detail Area</th>
+                  <th class="money-col">Monthly Salary</th>
+                  <th class="money-col" id="thSIPBudget">SIP Budget</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="associateTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================== DEPARTMENT HEAD ======================== -->
+      <div class="page" id="page-department-head">
+        <div class="page-header">
+          <h2>Department Head</h2>
+          <p>Profile list of department heads</p>
+        </div>
+        <div class="toolbar">
+          <span id="deptHeadCount" style="font-size:13px;color:var(--text-secondary);">Showing 0 records</span>
+          <button class="btn btn-primary" id="btnAddDeptHead" data-admin-only style="margin-left:auto;">
+            <i class="fa-solid fa-plus"></i> Add Department Head
+          </button>
+        </div>
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="data-table" id="deptHeadTable">
+              <thead>
+                <tr>
+                  <th>No.</th>
+                  <th>ID</th>
+                  <th>Full Name</th>
+                  <th>Initial Position</th>
+                  <th>Reporting Manager</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="deptHeadTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================== ACHIEVEMENT BOARD ======================== -->
+      <div class="page" id="page-new-customer">
+        <div class="page-header">
+          <h2>Achievement Board</h2>
+          <p>Individual associate achievement &amp; SIP infographic</p>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <select id="ab-associate" class="month-picker" style="min-width:280px;cursor:pointer;">
+              <option value="">— select associate —</option>
+            </select>
+            <input type="number" id="ab-year" class="month-picker" style="width:90px;" min="2020" max="2099" placeholder="Year" />
+            <select id="ab-month" class="month-picker" style="min-width:140px;cursor:pointer;"></select>
+          </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="ab-loading" style="display:none;padding:48px;text-align:center;color:#94a3b8;">
+          <i class="fa-solid fa-spinner fa-spin" style="font-size:28px;"></i>
+          <div style="margin-top:10px;font-size:14px;">Loading achievement data…</div>
+        </div>
+
+        <!-- Board -->
+        <div id="ab-board" style="display:none;">
+          <!-- Info strip -->
+          <div id="ab-info-strip" class="card ab-info-strip"></div>
+
+          <!-- Rank Position Banner - full width burgundy -->
+          <div class="card ab-rank-banner-full" id="ab-rank-card">
+            <div class="ach-filter ab-rank-filter-wrap" id="ab-rank-filter"></div>
+            <div class="ab-rank-layout">
+              <div id="ab-rank-char-area" class="ab-rank-char-area"></div>
+              <div class="ab-rank-center">
+                <div class="ab-rank-icon-green"><i class="fa-solid fa-ranking-star"></i></div>
+                <div class="ab-stat-label">Rank Position</div>
+                <div class="ab-stat-value" id="ab-val-rank" style="font-size:36px;">—</div>
+                <div id="ab-rank-myval" style="font-size:14px;font-weight:700;"></div>
+                <div class="ab-stat-sub" id="ab-sub-rank"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- KPI Achievement Cards + Bar Charts combined -->
+          <div class="card" style="padding:30px 20px;">
+            <div class="detail-section-header" style="padding:0 0 12px 0;border-bottom:1px solid var(--border);margin-bottom:14px;">
+              <h4 style="margin:0;font-size:18px;"><i class="fa-solid fa-chart-column"></i> Sales Achievement per KPI</h4>
+            </div>
+            <div id="ab-kpi-chart" class="ab-kpi-chart-grid"></div>
+          </div>
+
+          <!-- Monthly SIP timeline -->
+          <div class="card" id="ab-timeline">
+            <div class="detail-section-header" style="padding:12px 20px;border-bottom:1px solid var(--border);">
+              <h4 style="margin:0;font-size:18px;"><i class="fa-solid fa-chart-bar"></i> Monthly SIP Overview</h4>
+            </div>
+            <div id="ab-timeline-body"></div>
+          </div>
+
+          <!-- Quarter SIP overview -->
+          <div class="card" id="ab-quarter-panel" style="margin-top:30px;">
+            <div class="detail-section-header" style="padding:12px 20px;border-bottom:1px solid var(--border);">
+              <h4 style="margin:0;font-size:18px;"><i class="fa-solid fa-chart-pie"></i> Quarter SIP Overview</h4>
+            </div>
+            <div id="ab-quarter-body"></div>
+          </div>
+
+          <!-- stat cards: YTD SIP Earned -->
+          <div class="ab-stats-row">
+            <div class="ab-stat-card">
+              <div class="ab-stat-icon ab-stat-icon--green"><i class="fa-solid fa-calendar-check"></i></div>
+              <div class="ab-stat-body">
+                <div class="ab-stat-label">Yearly SIP Earned (YTD)</div>
+                <div class="ab-stat-value" id="ab-val-yearly">—</div>
+                <div class="ab-stat-sub" id="ab-sub-yearly"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================== ACTUAL ACHIEVEMENT FORM ======================== -->
+      <div class="page" id="page-actual-achievement">
+        <div class="page-header">
+          <h2>Actual Achievement</h2>
+          <p>Actual Key Performance Indicator achievement form per associate</p>
+        </div>
+        <div class="toolbar">
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <input type="month" id="actualMonth" class="month-picker" />
+            <div id="actualToolbarControls" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+              <select id="actualAssociate" class="month-picker" style="min-width:240px;cursor:pointer;">
+                <option value="">-- Select Associate --</option>
+              </select>
+              <button class="btn btn-primary" id="btnLoadActual" onclick="loadActualAchievementForm()">
+                <i class="fa-solid fa-magnifying-glass"></i> Show
+              </button>
+              <button class="btn btn-secondary" onclick="openImportActualModal()">
+                <i class="fa-solid fa-file-excel"></i> Import Excel
+              </button>
+            </div>
+          </div>
+        </div>
+        <div id="actualInfoCard" style="display:none;margin-bottom:16px;" class="table-card"></div>
+        <div id="actualKpiSection" style="display:none;margin-bottom:24px;" class="table-card"></div>
+
+        <!-- Actual Achievement Summary -->
+        <div class="table-card" id="actualSummarySection">
+          <div class="detail-section-header" style="padding:14px 18px;">
+            <h4 style="font-size:18px;font-weight:600;">
+              <i class="fa-solid fa-table-list"></i> Actual Achievement Summary
+            </h4>
+            <button class="btn btn-secondary btn-sm" id="btnLoadActualSummary" onclick="loadActualSummaryTable()">
+              <i class="fa-solid fa-rotate"></i> Load
+            </button>
+          </div>
+          <!-- Filter bar (hidden until data loaded) -->
+          <div id="actualSummaryFilterBar" style="display:none;padding:10px 16px;border-bottom:1px solid var(--border);display:none;flex-wrap:wrap;gap:8px;align-items:center;">
+            <div class="search-box" style="min-width:200px;">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="searchActualSummary" placeholder="Search name, ID..." />
+            </div>
+            <select id="filterSummaryLevel" class="month-picker" style="min-width:120px;">
+              <option value="">All Levels</option>
+            </select>
+            <select id="filterSummaryDetailArea" class="month-picker" style="min-width:160px;">
+              <option value="">All Detail Areas</option>
+            </select>
+            <button class="btn btn-secondary btn-sm" onclick="resetActualSummaryFilters()">
+              <i class="fa-solid fa-xmark"></i> Reset
+            </button>
+            <span id="actualSummaryCount" style="margin-left:auto;font-size:13px;color:var(--text-secondary);"></span>
+          </div>
+          <div id="actualSummaryBody">
+            <div style="padding:32px;text-align:center;color:var(--text-muted);">
+              <i class="fa-solid fa-table-list" style="font-size:28px;margin-bottom:8px;display:block;opacity:.3;"></i>
+              Select a month then click <strong>Load</strong> to display the summary.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================== SUMMARY ======================== -->
+      <div class="page" id="page-summary">
+        <div class="page-header">
+          <h2>Summary</h2>
+          <p>Current month SIP summary</p>
+        </div>
+        <div class="toolbar">
+          <div id="summarySearchBox" class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="searchSummary" placeholder="Search name, ID, area..." />
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <div style="display:flex;border-radius:6px;overflow:hidden;border:1px solid var(--border);">
+              <button id="btnSummaryMonthly" class="btn btn-primary btn-sm" style="border-radius:0;border:none;">Monthly</button>
+              <button id="btnSummaryYTD" class="btn btn-secondary btn-sm" style="border-radius:0;border:none;">YTD</button>
+              <button id="btnSummaryQ1" class="btn btn-secondary btn-sm" style="border-radius:0;border:none;">Q1</button>
+              <button id="btnSummaryQ2" class="btn btn-secondary btn-sm" style="border-radius:0;border:none;">Q2</button>
+              <button id="btnSummaryQ3" class="btn btn-secondary btn-sm" style="border-radius:0;border:none;">Q3</button>
+              <button id="btnSummaryQ4" class="btn btn-secondary btn-sm" style="border-radius:0;border:none;">Q4</button>
+            </div>
+            <input type="month" id="summaryMonth" class="month-picker" />
+            <button class="btn btn-primary" id="btnLoadSummary">
+              <i class="fa-solid fa-rotate"></i> Muat
+            </button>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-info">
+            <span id="summaryCount">Showing 0 records</span>
+            <span id="summaryTotalSIP" style="margin-left:auto;font-weight:600;color:var(--primary);"></span>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="summaryTable">
+              <thead>
+                <tr>
+                  <th>No.</th>
+                  <th>Group Area</th>
+                  <th>Detail Area</th>
+                  <th>ID</th>
+                  <th>Full Name</th>
+                  <th>Initial Position</th>
+                  <th>Plan</th>
+                  <th>Category</th>
+                  <th class="money-col">Salary</th>
+                  <th class="money-col" id="thSumSIPBudget" style="white-space:normal;">SIP Budget</th>
+                  <th class="money-col" id="thSumSIPAmount" style="white-space:normal;">SIP Amount</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="summaryTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ======================== CALCULATOR ======================== -->
+      <div class="page" id="page-calculator">
+        <div class="page-header">
+          <h2>Calculator</h2>
+          <p>Estimate monthly SIP by entering actual values per KPI</p>
+        </div>
+
+        <!-- Selector row -->
+        <div class="calc-config card">
+          <div class="calc-config-row">
+            <div class="form-group" style="flex:2;min-width:200px;">
+              <label>Associate</label>
+              <select id="calc-associate" class="form-input">
+                <option value="">— select associate —</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex:1;min-width:140px;">
+              <label>Month</label>
+              <select id="calc-month" class="form-input"></select>
+            </div>
+          </div>
+          <!-- Info pills (auto-filled) -->
+          <div id="calc-info-pills" class="calc-info-pills" style="display:none;">
+            <span class="calc-pill"><span class="calc-pill-lbl">Level</span><span id="calc-pill-level" class="calc-pill-val">—</span></span>
+            <span class="calc-pill"><span class="calc-pill-lbl">Area</span><span id="calc-pill-area" class="calc-pill-val">—</span></span>
+            <span class="calc-pill"><span class="calc-pill-lbl">Monthly Budget</span><span id="calc-pill-budget" class="calc-pill-val">—</span></span>
+          </div>
+        </div>
+
+        <!-- KPI input table -->
+        <div id="calc-kpi-section" class="card" style="display:none;">
+          <div class="card-header" style="border-bottom:1px solid var(--border);padding:12px 20px;">
+            <h3 style="margin:0;font-size:14px;"><i class="fa-solid fa-sliders"></i> KPI Actuals</h3>
+          </div>
+          <div id="calc-table-wrap"></div>
+        </div>
+
+        <!-- Result -->
+        <div id="calc-result" class="calc-result" style="display:none;">
+          <div class="calc-result-label">Estimated SIP Earned</div>
+          <div class="calc-result-amount" id="calc-result-amount">Rp 0</div>
+          <div class="calc-result-note" id="calc-result-note"></div>
+        </div>
+      </div>
+
+      <!-- ======================== ORGANIZATIONAL STRUCTURE ======================== -->
+      <div class="page" id="page-org-structure">
+        <div class="page-header">
+          <h2>Organizational Structure</h2>
+          <p>Company hierarchy based on reporting relationships</p>
+        </div>
+
+        <div class="card">
+          <div class="card-body" style="padding:12px;">
+            <div id="orgStructureContainer" style="overflow-x:auto;padding:8px;">
+              <div style="text-align:center;color:#94a3b8;padding:40px 20px;">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size:24px;margin-bottom:12px;"></i>
+                <div>Loading organizational structure...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================== SIP REPORT PAGE ======================== -->
+      <div class="page" id="page-sip-report">
+        <div class="page-header">
+          <h2>SIP Report</h2>
+          <p>Cut-off Monthly SIP — mark as paid to lock data</p>
+        </div>
+
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-body">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+              <label style="font-weight:600;font-size:13px;color:#374151;">Cut-off Period:</label>
+              <input type="month" id="sipReportMonth" class="form-control" style="width:180px;" />
+              <button class="btn btn-primary" id="btnGenerateSIPReport">
+                <i class="fa-solid fa-file-chart-column"></i> Generate Report
+              </button>
+              <span id="sipReportStatusBadge" style="display:none;"></span>
+              <span id="sipReportPaidInfo" style="font-size:12px;color:#6b7280;"></span>
+
+              <!-- Right-side button group (Carry-Forward + Pending Requests) -->
+              <div style="display:flex;gap:8px;align-items:center;margin-left:auto;">
+
+                <!-- Carry-Forward button — visible when report has CF data -->
+                <div id="sipCFBtnWrap" style="display:none;position:relative;">
+                  <button class="btn btn-outline" onclick="openModal('carryForwardOverlay')" style="position:relative;">
+                    <i class="fa-solid fa-rotate" style="color:#d97706;"></i> Carry-Forward
+                    <span id="sipCFBadge" style="display:none;position:absolute;top:-7px;right:-7px;background:#d97706;color:#fff;border-radius:9999px;min-width:18px;height:18px;padding:0 5px;font-size:11px;font-weight:700;line-height:18px;text-align:center;box-sizing:border-box;"></span>
+                  </button>
+                </div>
+
+                <!-- Pending Requests button — admin only -->
+                <div id="sipPendingBtnWrap" style="display:none;position:relative;">
+                  <button id="btnPendingRequests" class="btn btn-outline" onclick="togglePendingDropdown()" style="position:relative;">
+                    <i class="fa-solid fa-inbox"></i> Pending Requests
+                    <span id="sipPendingBadge" style="display:none;position:absolute;top:-7px;right:-7px;background:#ef4444;color:#fff;border-radius:9999px;min-width:18px;height:18px;padding:0 5px;font-size:11px;font-weight:700;line-height:18px;text-align:center;box-sizing:border-box;"></span>
+                  </button>
+                  <div id="sipPendingDropdown" style="display:none;position:absolute;top:calc(100% + 8px);right:0;width:820px;max-width:90vw;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,0.15);z-index:500;overflow:hidden;">
+                    <div style="padding:12px 16px;background:#fff7ed;border-bottom:1px solid #fed7aa;display:flex;align-items:center;justify-content:space-between;">
+                      <div style="font-weight:600;font-size:13px;color:#92400e;"><i class="fa-solid fa-inbox"></i> Pending KPI Change Requests</div>
+                      <button class="btn btn-sm btn-outline" onclick="loadPendingUnlockRequests()" style="font-size:12px;"><i class="fa-solid fa-rotate"></i> Refresh</button>
+                    </div>
+                    <div id="sipPendingRequestsBody" style="max-height:440px;overflow-y:auto;padding:12px;">
+                      <div style="text-align:center;color:#94a3b8;font-size:13px;padding:12px 0;">
+                        <i class="fa-solid fa-circle-check" style="color:#10b981;"></i> No pending requests.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div><!-- /right button group -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Report content -->
+        <div id="sipReportContent" style="display:none;">
+
+          <!-- Summary card -->
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-body" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+              <div>
+                <div style="font-size:12px;color:#6b7280;margin-bottom:2px;">Total SIP Payable</div>
+                <div id="sipReportGrandTotal" style="font-size:22px;font-weight:700;color:#1e6ba8;">Rp 0</div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <span id="sipReportPeriodLabel" style="font-size:14px;font-weight:600;color:#353333;"></span>
+                <button class="btn btn-outline" onclick="exportSIPReportExcel()" style="font-size:13px;">
+                  <i class="fa-solid fa-file-excel" style="color:#16a34a;"></i> Export Excel
+                </button>
+                <button class="btn btn-success" id="btnMarkPaid" style="display:none;">
+                  <i class="fa-solid fa-circle-check"></i> Mark as Paid
+                </button>
+                <button class="btn btn-outline" id="btnUnmarkPaid" style="display:none;">
+                  <i class="fa-solid fa-rotate-left"></i> Revert to Draft
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main report table -->
+          <div class="card">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="data-table" id="sipReportTable">
+                  <thead>        
+                      <tr>
+                        <th>No.</th><th>ID</th>
+                        <th>Full Name</th><th>Position</th><th>Plan</th>
+                        <th>SIP Budget</th><th>SIP Earned</th><th>SIP Quarter</th>
+                        <th>Carry-forward ±</th><th>Total Payable</th><th>KPI Status</th>
+                      </tr>
+                  </thead>
+                  <tbody id="sipReportBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /sipReportContent -->
+      </div><!-- /page-sip-report -->
+
+    </main>
+  </div>
+
+  <!-- ======================== SIP TIERS SETTING MODAL ======================== -->
+  <div class="modal-overlay" id="tiersOverlay">
+    <div class="modal" style="max-width:820px;width:95%;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-layer-group" style="color:#1e6ba8;"></i> Konfigurasi SIP Tiers</h3>
+        <button class="modal-close" onclick="closeModal('tiersOverlay')">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:20px;">
+        <p style="font-size:13px;color:#6b7280;margin-bottom:16px;">
+          Atur nilai tier SIP per plan. Perubahan akan langsung digunakan dalam semua perhitungan SIP.
+        </p>
+        <div class="table-responsive">
+          <table class="data-table" style="font-size:13px;">
+            <thead>
+              <tr>
+                <th style="width:70px;">Plan</th>
+                <th>Base SIP<br><span style="font-weight:400;font-size:11px;color:#6b7280;">(pada 85%)</span></th>
+                <th>Increment / % <br><span style="font-weight:400;font-size:11px;color:#6b7280;">(range 85–100%)</span></th>
+                <th>Increment / % <br><span style="font-weight:400;font-size:11px;color:#6b7280;">(range 101–110%)</span></th>
+                <th>Maximum SIP<br><span style="font-weight:400;font-size:11px;color:#6b7280;">(di atas 110%)</span></th>
+              </tr>
+            </thead>
+            <tbody id="tiersTableBody">
+              <!-- rows injected by JS openTiersSetting() -->
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:14px;font-size:12px;color:#6b7280;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;">
+          <strong>Logika perhitungan:</strong><br>
+          &lt; 85% &rarr; Rp 0 &nbsp;|&nbsp;
+          85–100% &rarr; Base + (% &minus; 85) &times; Inc&nbsp;85&ndash;100 &nbsp;|&nbsp;
+          101–110% &rarr; nilai di 100% + (% &minus; 100) &times; Inc&nbsp;101&ndash;110 &nbsp;|&nbsp;
+          &gt; 110% &rarr; Maximum
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('tiersOverlay')">Batal</button>
+        <button class="btn btn-primary" id="btnSaveTiers" onclick="saveTiers()">
+          <i class="fa-solid fa-floppy-disk"></i> Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== CARRY-FORWARD DETAIL MODAL ======================== -->
+  <div class="modal-overlay" id="carryForwardOverlay">
+    <div class="modal" style="max-width:1000px;width:100%;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-rotate" style="color:#d97706;"></i> Carry-Forward Detail</h3>
+        <button class="modal-close" onclick="closeModal('carryForwardOverlay')">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:20px;">
+
+        <!-- Backdate Entry section -->
+        <div id="cfModalBackdateSection" style="display:none;">
+          <div style="font-weight:700;font-size:13px;color:#92400e;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            <i class="fa-solid fa-clock-rotate-left" style="color:#f59e0b;"></i> Backdate Entry
+            <span style="font-weight:400;font-size:12px;color:#6b7280;"></span>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" style="font-size:13px;">
+              <thead><tr>
+                <th>Employee</th><th>KPI Component</th><th>Month</th>
+                <th style="text-align:right;">Actual Value</th>
+                <th style="text-align:right;">SIP Monthly</th>
+                <th style="text-align:right;">SIP Quarter</th>
+              </tr></thead>
+              <tbody id="sipReportCFBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Actual Value Adjustment section -->
+        <div id="cfModalAdjSection" style="display:none;">
+          <div style="font-weight:700;font-size:13px;color:#5b21b6;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            <i class="fa-solid fa-arrows-rotate" style="color:#8b5cf6;"></i> Actual Value Adjustment
+            <span style="font-weight:400;font-size:12px;color:#6b7280;"></span>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" style="font-size:13px;">
+              <thead><tr>
+                <th>Employee</th><th>KPI Component</th><th>Month</th>
+                <th>Old Value &rarr; New</th><th style="text-align:right;">SIP Difference</th>
+              </tr></thead>
+              <tbody id="sipReportAdjBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('carryForwardOverlay')">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== IMPORT ACTUAL MODAL ======================== -->
+  <div class="modal-overlay" id="importActualOverlay">
+    <div class="modal" style="max-width:780px;width:95%;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-file-excel" style="color:#16a34a;"></i> Import KPI Actuals from Excel</h3>
+        <button class="modal-close" onclick="closeModal('importActualOverlay')">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:20px;">
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 18px;margin-bottom:16px;font-size:13px;">
+          <strong>Format Excel:</strong> kolom <code>employee_id</code> &nbsp;|&nbsp; <code>component</code> &nbsp;|&nbsp; <code>actual</code><br/>
+          <span style="color:#64748b;">First row is the header. Data will be saved for the month selected in the toolbar.</span>
+          <div style="margin-top:8px;">
+            <a id="importActualTemplateLink" href="#" onclick="downloadActualTemplate(event)" style="color:#16a34a;font-weight:600;text-decoration:underline;">
+              <i class="fa-solid fa-download"></i> Download Template
+            </a>
+          </div>
+        </div>
+        <div style="margin-bottom:14px;display:flex;gap:10px;align-items:center;">
+          <label class="btn btn-secondary" style="cursor:pointer;margin:0;">
+            <i class="fa-solid fa-folder-open"></i> Choose Excel File
+            <input type="file" id="importActualFile" accept=".xlsx,.xls,.csv" style="display:none;" onchange="previewImportActual(this)" />
+          </label>
+          <span id="importActualFileName" style="font-size:13px;color:var(--text-muted);">No file selected</span>
+        </div>
+        <div id="importActualPreview" style="display:none;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:6px;">Preview <span id="importActualCount" style="color:var(--text-muted);"></span></div>
+          <div class="table-responsive" style="max-height:300px;overflow-y:auto;">
+            <table class="data-table" id="importActualTable">
+              <thead><tr><th>No.</th><th>Employee ID</th><th>Component</th><th>Actual</th><th>Status</th></tr></thead>
+              <tbody id="importActualBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div id="importActualError" style="display:none;color:var(--red);font-size:13px;margin-top:10px;"></div>
+      </div>
+      <div class="modal-footer" style="display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--border);">
+        <button class="btn btn-secondary" onclick="closeModal('importActualOverlay')">Cancel</button>
+        <button class="btn btn-primary" id="btnConfirmImport" onclick="confirmImportActual()" disabled>
+          <i class="fa-solid fa-cloud-upload-alt"></i> Save Import
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== MODAL ADD/EDIT ASSOCIATE ======================== -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modalAssociate">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add Associate</h3>
+        <button class="modal-close" id="modalClose"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="associateForm">
+          <input type="hidden" id="formId" />
+          <div class="form-grid">
+            <div class="form-group">
+              <label>ID <span class="required">*</span></label>
+              <input type="text" id="formEmployeeId" placeholder="Employee ID" required />
+            </div>
+            <div class="form-group">
+              <label>Full Name <span class="required">*</span></label>
+              <input type="text" id="formFullName" placeholder="Full name" required />
+            </div>
+            <div class="form-group">
+              <label>Initial Position <span class="required">*</span></label>
+              <input type="text" id="formPosition" placeholder="e.g. Sales Executive" required />
+            </div>
+            <div class="form-group">
+              <label>Level <span class="required">*</span></label>
+              <select id="formLevel" required>
+                <option value="">-- Select Level --</option>
+                <option value="Manager">Manager</option>
+                <option value="Leader">Leader</option>
+                <option value="Senior">Senior</option>
+                <option value="Senior TAC">Senior TAC</option>
+                <option value="Junior TAC">Junior TAC</option>
+                <option value="Junior">Junior</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Category <span class="required">*</span></label>
+              <select id="formCategory" required>
+                <option value="">-- Select Category --</option>
+                <option value="Digital Sales">Digital Sales</option>
+                <option value="Manager">Manager</option>
+                <option value="Sales">Sales</option>
+                <option value="Supervisor">Supervisor</option>
+                <option value="TAC">TAC</option>
+                <option value="Technical">Technical</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Plan <span class="required">*</span></label>
+              <select id="formPlan" required>
+                <option value="">-- Select Plan --</option>
+                <option value="3">3</option>
+                <option value="2">2</option>
+                <option value="2L">2L</option>
+                <option value="2T">2T</option>
+                <option value="1">1</option>
+                <option value="1T">1T</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Detail Area <span class="required">*</span></label>
+              <input type="text" id="formDetailArea" placeholder="e.g. South Jakarta" required />
+            </div>
+            <div class="form-group">
+              <label>Group Area <span class="required">*</span></label>
+              <input type="text" id="formGroupArea" placeholder="e.g. DKI Jakarta" required />
+            </div>
+            <div class="form-group">
+              <label>Reporting Manager</label>
+              <select id="formReportingManager">
+                <option value="">— No Manager —</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Salary (Rp) <span class="required">*</span></label>
+              <input type="number" id="formSalary" placeholder="0" min="0" required />
+            </div>
+            <div class="form-group">
+              <label>Current SIP% <span class="required">*</span></label>
+              <input type="number" id="formCurrentSIP" placeholder="0.00" min="0" max="200" step="0.01" required />
+            </div>
+            <!-- Monthly SIP Budget - single locked field -->
+            <div class="form-group">
+              <label>Monthly SIP Budget (Rp)</label>
+              <input type="number" id="formBudgetMonthly" placeholder="0" min="0" readonly
+                     style="background:#f8fafc; cursor:not-allowed; color:#64748b;" />
+              <small style="color:#94a3b8; font-size:11px; display:block; margin-top:4px;">
+                <i class="fa-solid fa-lock" style="font-size:10px;"></i>
+                Automatically filled from SIP Budget
+              </small>
+            </div>
+            <!-- Join Date -->
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label>Join Date</label>
+              <input type="date" id="formJoinDate" style="width:auto;" />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btnCancel">Cancel</button>
+        <button class="btn btn-primary" id="btnSave">
+          <i class="fa-solid fa-floppy-disk"></i> Save
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== MODAL DEPARTMENT HEAD ======================== -->
+  <div class="modal-overlay" id="deptHeadModalOverlay">
+    <div class="modal modal-sm" id="deptHeadModal">
+      <div class="modal-header">
+        <h3 id="deptHeadModalTitle"><i class="fa-solid fa-user-tie"></i> Add Department Head</h3>
+        <button class="modal-close" id="deptHeadModalClose"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="deptHeadForm">
+          <input type="hidden" id="deptHeadEditId" />
+          <div class="form-group">
+            <label>ID <span class="required">*</span></label>
+            <input type="text" id="dhFormId" placeholder="Employee ID" required />
+          </div>
+          <div class="form-group">
+            <label>Full Name <span class="required">*</span></label>
+            <input type="text" id="dhFormFullName" placeholder="Full name" required />
+          </div>
+          <div class="form-group">
+            <label>Initial Position <span class="required">*</span></label>
+            <input type="text" id="dhFormPosition" placeholder="e.g. Sales Manager" required />
+          </div>
+          <div class="form-group">
+            <label>Reporting Manager</label>
+            <select id="dhFormReportingManager">
+              <option value="">— No Manager —</option>
+            </select>
+          </div>
+        </form>
+        <div id="deptHeadFormError" class="uas-form-error hidden"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="deptHeadModalCancel">Cancel</button>
+        <button class="btn btn-primary" id="deptHeadModalSave">
+          <i class="fa-solid fa-floppy-disk"></i> <span id="deptHeadSaveText">Save</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== MODAL DELETE CONFIRMATION ======================== -->
+  <div class="modal-overlay" id="deleteOverlay">
+    <div class="modal modal-sm" id="deleteModal">
+      <div class="modal-header danger">
+        <h3><i class="fa-solid fa-triangle-exclamation"></i> Delete Record</h3>
+        <button class="modal-close" id="deleteClose"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body center">
+        <p>Are you sure you want to delete this associate?</p>
+        <p class="delete-name" id="deleteName"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btnDeleteCancel">Cancel</button>
+        <button class="btn btn-danger" id="btnDeleteConfirm">
+          <i class="fa-solid fa-trash"></i> Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== MODAL DETAIL ASSOCIATE ======================== -->
+  <div class="modal-overlay" id="detailOverlay">
+    <div class="modal modal-detail" id="detailModal">
+      <div class="modal-header">
+        <h3 id="detailTitle"><i class="fa-solid fa-id-card"></i> Detail Associate</h3>
+        <button class="modal-close" id="detailClose"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+
+        <!-- Info Card -->
+        <div style="position:relative;">
+          <button class="btn btn-secondary btn-sm" id="btnDetailEdit" style="display:none;position:absolute;top:12px;right:12px;z-index:1;">
+            <i class="fa-solid fa-pen"></i>
+          </button>
+          <div class="detail-info-grid" id="detailInfoGrid"></div>
+        </div>
+
+        <!-- Employment History -->
+        <div class="detail-section">
+          <div class="detail-section-header">
+            <h4><i class="fa-solid fa-clock-rotate-left"></i> Employment History</h4>
+            <button class="btn btn-primary btn-sm" id="btnAddHistory">
+              <i class="fa-solid fa-plus"></i> Add History
+            </button>
+          </div>
+
+          <!-- Form tambah riwayat (hidden by default) -->
+          <div class="history-form" id="historyForm" style="display:none;">
+            <div class="history-form-grid">
+              <div class="form-group">
+                <label>Initial Position <span class="required">*</span></label>
+                <input type="text" id="hFormPosition" placeholder="Contoh: Sales Executive" />
+              </div>
+              <div class="form-group">
+                <label>Level</label>
+                <select id="hFormLevel">
+                  <option value="">-- Select Level --</option>
+                  <option value="Manager">Manager</option>
+                  <option value="Leader">Leader</option>
+                  <option value="Senior">Senior</option>
+                  <option value="Senior TAC">Senior TAC</option>
+                  <option value="Junior TAC">Junior TAC</option>
+                  <option value="Junior">Junior</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Category</label>
+                <select id="hFormCategory">
+                  <option value="">-- Select Category --</option>
+                  <option value="Digital Sales">Digital Sales</option>
+                  <option value="Manager">Manager</option>
+                  <option value="Sales">Sales</option>
+                  <option value="Supervisor">Supervisor</option>
+                  <option value="TAC">TAC</option>
+                  <option value="Technical">Technical</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Plan</label>
+                <select id="hFormPlan">
+                  <option value="">-- Select Plan --</option>
+                  <option value="3">3</option>
+                  <option value="2">2</option>
+                  <option value="2L">2L</option>
+                  <option value="2T">2T</option>
+                  <option value="1">1</option>
+                  <option value="1T">1T</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Salary (Rp) <span class="required">*</span></label>
+                <input type="number" id="hFormSalary" placeholder="0" min="0" />
+              </div>
+              <div class="form-group">
+                <label>SIP Budget (Rp) <span class="required">*</span></label>
+                <input type="number" id="hFormSIPBudget" placeholder="0" min="0" />
+              </div>
+              <div class="form-group">
+                <label>Effective Date <span class="required">*</span></label>
+                <input type="date" id="hFormDate" />
+              </div>
+              <div class="form-group">
+                <label>Notes</label>
+                <input type="text" id="hFormNotes" placeholder="e.g. Promotion, Salary adjustment..." />
+              </div>
+            </div>
+            <div class="history-form-actions">
+              <button class="btn btn-secondary btn-sm" id="btnCancelHistory">Cancel</button>
+              <button class="btn btn-primary btn-sm" id="btnSaveHistory">
+                <i class="fa-solid fa-floppy-disk"></i> Save
+              </button>
+            </div>
+          </div>
+
+          <!-- History table -->
+          <div class="table-responsive">
+            <table class="data-table" id="historyTable">
+              <thead>
+                <tr>
+                  <th>No.</th>
+                  <th>Initial Position</th>
+                  <th>Level</th>
+                  <th>Category</th>
+                  <th>Plan</th>
+                  <th class="money-col">Salary</th>
+                  <th class="money-col">SIP Budget</th>
+                  <th>Effective Date</th>
+                  <th>Notes</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TARGET ACHIEVEMENT -->
+        <div class="detail-section" style="margin-top:24px;" id="kpiSection">
+          <div class="detail-section-header">
+            <h4><i class="fa-solid fa-bullseye"></i> Target Achievement</h4>
+          </div>
+          <div id="kpiBody"></div>
+        </div>
+
+        <!-- SIP Budget -->
+        <div class="detail-section" style="margin-top:24px;" id="sipMonthlySection">
+          <div class="detail-section-header">
+            <h4><i class="fa-solid fa-calendar-days"></i> SIP Budget</h4>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="sipMonthlyTable">
+              <thead>
+                <tr>
+                  <th rowspan="2">Month</th>
+                  <th rowspan="2">Initial Position</th>
+                  <th rowspan="2" style="text-align:right;">MONTHLY (100%)</th>
+                  <th rowspan="2" style="text-align:right;background:#fdf4ff;width:200px;white-space:normal;word-break:break-word;">Closed Won/ Consumption (15%)</th>
+                  <th colspan="2" style="text-align:center;background:#f0fdf4;border-bottom:2px solid #86efac;">SALES (85%)</th>
+                </tr>
+                <tr>
+                  <th style="text-align:right;background:#f0fdf4;">Monthly Sales (80%)</th>
+                  <th style="text-align:right;background:#fff7ed;">Quarter (20%)</th>
+                </tr>
+              </thead>
+              <tbody id="sipMonthlyBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SIP Monthly Budget per KPI -->
+        <div class="detail-section" style="margin-top:24px;" id="sipKpiSection">
+          <div class="detail-section-header">
+            <h4><i class="fa-solid fa-chart-pie"></i> SIP Monthly Budget per KPI</h4>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="sipKpiTable">
+              <thead id="sipKpiHead"></thead>
+              <tbody id="sipKpiBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SIP Quarter Budget per KPI -->
+        <div class="detail-section" style="margin-top:24px;" id="sipQuarterKpiSection">
+          <div class="detail-section-header">
+            <h4><i class="fa-solid fa-chart-pie"></i> SIP Quarter Budget per KPI</h4>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="sipQuarterKpiTable">
+              <thead id="sipQuarterKpiHead"></thead>
+              <tbody id="sipQuarterKpiBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer" style="justify-content:space-between;">
+        <button class="btn btn-danger btn-sm" id="btnDetailResign" style="display:none;">
+          <i class="fa-solid fa-user-slash"></i> Resign
+        </button>
+        <button class="btn btn-success btn-sm" id="btnDetailReactivate" style="display:none;">
+          <i class="fa-solid fa-user-check"></i> Aktifkan Kembali
+        </button>
+        <button class="btn btn-secondary" id="detailCloseBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Detail Modal (read-only monthly view) -->
+  <div class="modal-overlay" id="summaryDetailOverlay">
+    <div class="modal modal-detail" id="summaryDetailModal">
+      <div class="modal-header">
+        <h3 id="summaryDetailTitle"><i class="fa-solid fa-calculator"></i> SIP Calculation Detail</h3>
+        <button class="modal-close" id="summaryDetailClose"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body" id="summaryDetailBody" style="padding:0;"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="summaryDetailCloseBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== RESIGN MODAL ======================== -->
+  <div class="modal-overlay" id="resignOverlay">
+    <div class="modal modal-sm" id="resignModal">
+      <div class="modal-header danger">
+        <h3><i class="fa-solid fa-user-slash"></i> Nonaktifkan Associate</h3>
+        <button class="modal-close" id="resignClose"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <p>Masukkan tanggal efektif resign untuk <strong id="resignName"></strong>.<br>
+          SIP Budget bulan-bulan setelah tanggal ini akan dihitung <strong>nol (0)</strong>.</p>
+        <div class="form-group" style="margin-top:14px;">
+          <label>Tanggal Resign <span class="required">*</span></label>
+          <input type="date" id="resignDateInput" class="form-input" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btnResignCancel">Cancel</button>
+        <button class="btn btn-danger" id="btnResignConfirm">
+          <i class="fa-solid fa-user-slash"></i> Konfirmasi Resign
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== UNLOCK REQUEST MODAL ======================== -->
+  <div class="modal-overlay" id="unlockRequestOverlay">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-lock-open" style="color:#f59e0b;"></i> Unlock Actual KPI Form Request</h3>
+        <button class="modal-close" id="unlockRequestClose">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:20px;">
+        <div class="form-group">
+          <label>Associate</label>
+          <input type="text" id="unlockReqEmployee" class="form-input" readonly style="background:#f8fafc;" />
+        </div>
+        <div class="form-group">
+          <label>KPI Component</label>
+          <input type="text" id="unlockReqComponent" class="form-input" readonly style="background:#f8fafc;" />
+        </div>
+        <div class="form-group">
+          <label>Month / Year</label>
+          <input type="text" id="unlockReqMonth" class="form-input" readonly style="background:#f8fafc;" />
+        </div>
+        <div class="form-group">
+          <label>Current Value (Locked)</label>
+          <input type="text" id="unlockReqOldValue" class="form-input" readonly style="background:#f8fafc;" />
+        </div>
+        <div class="form-group">
+          <label>New Value <span class="required">*</span></label>
+          <input type="number" id="unlockReqNewValue" class="form-input" min="0" step="any" placeholder="Enter new value..." />
+        </div>
+        <div class="form-group">
+          <label>Selisih SIP Dibayarkan di Bulan <span class="required">*</span></label>
+          <select id="unlockReqCFMonth" class="form-input">
+            <!-- populated by JS -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Reason for Change <span class="required">*</span></label>
+          <textarea id="unlockReqReason" class="form-input" rows="3" placeholder="Explain the reason for the increase/decrease..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="unlockRequestCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="btnSubmitUnlockRequest">
+          <i class="fa-solid fa-paper-plane"></i> Submit Request
+        </button>
+      </div>
+    </div>
+  </div><!-- /unlockRequestOverlay -->
+
+  <!-- ======================== UNLOCK REVIEW MODAL ======================== -->
+  <div class="modal-overlay" id="unlockReviewOverlay">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-clipboard-check"></i> Review Change Request</h3>
+        <button class="modal-close" id="unlockReviewClose">&times;</button>
+      </div>
+      <div class="modal-body" id="unlockReviewBody" style="padding:20px;">
+        <!-- populated by JS -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btnCloseUnlockReview">Cancel</button>
+        <button class="btn btn-danger"    id="btnRejectUnlock"><i class="fa-solid fa-xmark"></i> Reject</button>
+        <button class="btn btn-success"   id="btnApproveUnlock"><i class="fa-solid fa-check"></i> Approve</button>
+      </div>
+    </div>
+  </div><!-- /unlockReviewOverlay -->
+
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <script src="js/data.js?v=2"></script>
+  <script src="js/app.js?v=24"></script>
+
+</body>
+</html>
